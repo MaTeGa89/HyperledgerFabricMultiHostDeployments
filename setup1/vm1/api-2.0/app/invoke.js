@@ -5,16 +5,7 @@ const log4js = require('log4js');
 const logger = log4js.getLogger('BasicNetwork');
 const util = require('util')
 
-// const createTransactionEventHandler = require('./MyTransactionEventHandler.ts')
-
 const helper = require('./helper')
-
-// const createTransactionEventHandler = (transactionId, network) => {
-//     /* Your implementation here */
-//     const mspId = network.getGateway().getIdentity().mspId;
-//     const myOrgPeers = network.getChannel().getEndorsers(mspId);
-//     return new MyTransactionEventHandler(transactionId, network, myOrgPeers);
-// }
 
 const invokeTransaction = async (channelName, chaincodeName, fcn, args, username, org_name, transientData) => {
     try {
@@ -40,7 +31,7 @@ const invokeTransaction = async (channelName, chaincodeName, fcn, args, username
             return;
         }
 
-
+        
 
         const connectOptions = {
             wallet, identity: username, discovery: { enabled: true, asLocalhost: false },
@@ -62,71 +53,53 @@ const invokeTransaction = async (channelName, chaincodeName, fcn, args, username
 
         const contract = network.getContract(chaincodeName);
 
-        // let result
-        // let message;
-        // switch (fcn) {
-        //     case "CreateInvoice":
-        //         result = await contract.submitTransaction(fcn, args[0]);
-        //         // obj = JSON.stringify(JSON.parse(args[0]))
-        //         // console.log(JSON.parse(args[0]))
-        //         message = `Successfully added the Invoice Data`
-        //         break;
-        //     case "UpdateInvoice":
-        //         if (org_name == "Org1") {
-        //             return { message: "Only Organization 2 is allowed to add transactions" }
-        //         } else {
-        //             result = await contract.submitTransaction(fcn, args[0], args[1], args[2]);
-        //             // obj = JSON.stringify(JSON.parse(args[0]))
-        //             // console.log(JSON.parse(args[0]))
-        //             message = `Successfully updated the Invoice Data`
-        //             break;
-        //         }
-
-
-        //     // case ""
-
-        //     default:
-        //         return utils.getResponsePayload("Please send correct chaincode function name", null, false)
-        //         break;
-        // }
         let result
         let message;
-        if (fcn === "createCar" || fcn === "createPrivateCarImplicitForOrg1"
-            || fcn == "createPrivateCarImplicitForOrg2") {
-            result = await contract.submitTransaction(fcn, args[0], args[1], args[2], args[3], args[4]);
-            message = `Successfully added the car asset with key ${args[0]}`
 
-        } else if (fcn === "changeCarOwner") {
+        if(fcn == "CreateVaccineBatch"){
+            result = await contract.submitTransaction(fcn, args[0]);
+            message = `Successfully added the Vaccin Batch  with id ${JSON.parse(args[0]).id}`
+            result= JSON.parse(args[0])
+        }else if(fcn == "UpdateVaccineBatch"){
             result = await contract.submitTransaction(fcn, args[0], args[1]);
-            message = `Successfully changed car owner with key ${args[0]}`
-        } else if (fcn == "createPrivateCar" || fcn == "updatePrivateData") {
-            console.log(`Transient data is : ${transientData}`)
-            let carData = JSON.parse(transientData)
-            console.log(`car data is : ${JSON.stringify(carData)}`)
-            let key = Object.keys(carData)[0]
-            const transientDataBuffer = {}
-            transientDataBuffer[key] = Buffer.from(JSON.stringify(carData.car))
-            result = await contract.createTransaction(fcn)
-                .setTransient(transientDataBuffer)
-                .submit()
-            message = `Successfully submitted transient data`
-        }
-        else {
+            message = `Successfully updated Vaccine Batch with id ${args[0]}`
+            result= JSON.parse(args[1])
+        } else {
             return `Invocation require either createCar or changeCarOwner as function but got ${fcn}`
         }
+
+        // if (fcn === "createCar" || fcn === "createPrivateCarImplicitForOrg1"
+        //     || fcn == "createPrivateCarImplicitForOrg2") {
+        //     result = await contract.submitTransaction(fcn, args[0], args[1], args[2], args[3], args[4]);
+        //     message = `Successfully added the car asset with key ${args[0]}`
+
+        // } else if (fcn === "changeCarOwner") {
+        //     result = await contract.submitTransaction(fcn, args[0], args[1]);
+        //     message = `Successfully changed car owner with key ${args[0]}`
+        // } else if (fcn == "createPrivateCar" || fcn =="updatePrivateData") {
+        //     console.log(`Transient data is : ${transientData}`)
+        //     let carData = JSON.parse(transientData)
+        //     console.log(`car data is : ${JSON.stringify(carData)}`)
+        //     let key = Object.keys(carData)[0]
+        //     const transientDataBuffer = {}
+        //     transientDataBuffer[key] = Buffer.from(JSON.stringify(carData.car))
+        //     result = await contract.createTransaction(fcn)
+        //         .setTransient(transientDataBuffer)
+        //         .submit()
+        //     message = `Successfully submitted transient data`
+        // }
+        // else {
+        //     return `Invocation require either createCar or changeCarOwner as function but got ${fcn}`
+        // }
+
         await gateway.disconnect();
 
         // result = JSON.parse(result.toString());
 
         let response = {
-            message: message
-            // result
+            message: message,
+            result
         }
-
-        // let response = {
-        //     message: message,
-        //     result
-        // }
 
         return response;
 

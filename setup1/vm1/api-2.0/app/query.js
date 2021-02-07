@@ -10,8 +10,7 @@ const helper = require('./helper')
 const query = async (channelName, chaincodeName, args, fcn, username, org_name) => {
 
     try {
-        console.log(`arguments type is------------------------------------------------------------- ${typeof args}`)
-        console.log(`length of args is------------------------------------------------------------ ${args.length}`)
+
         // load the network configuration
         // const ccpPath = path.resolve(__dirname, '..', 'config', 'connection-org1.json');
         // const ccpJSON = fs.readFileSync(ccpPath, 'utf8')
@@ -45,9 +44,7 @@ const query = async (channelName, chaincodeName, args, fcn, username, org_name) 
         const contract = network.getContract(chaincodeName);
         let result;
 
-        if (fcn == "queryCar" || fcn =="queryCarsByOwner" || fcn == 'getHistoryForAsset' || fcn=='restictedMethod') {
-            console.log(`arguments type is------------------------------------------------------------- ${typeof args}`)
-            console.log(`length of args is------------------------------------------------------------ ${args.length}`)
+        if (fcn == "queryCar" || fcn =="queryCarsByOwner" || fcn=='restictedMethod' || fcn == "GetVaccineBatchById" || fcn =="GetHistoryForAsset") {
             result = await contract.evaluateTransaction(fcn, args[0]);
 
         } else if (fcn == "readPrivateCar" || fcn == "queryPrivateDataHash"
@@ -56,7 +53,6 @@ const query = async (channelName, chaincodeName, args, fcn, username, org_name) 
             // return result
 
         }
-
         console.log(result)
         console.log(`Transaction has been evaluated, result is: ${result.toString()}`);
 

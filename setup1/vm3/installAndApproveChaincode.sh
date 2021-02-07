@@ -24,7 +24,7 @@ setGlobalsForPeer1Org3() {
 
 presetup() {
     echo Vendoring Go dependencies ...
-    pushd ./../../artifacts/src/github.com/fabcar/go
+    pushd ./../../artifacts/src/github.com/supply-chain
     GO111MODULE=on go mod vendor
     popd
     echo Finished vendoring Go dependencies
@@ -34,8 +34,8 @@ presetup() {
 CHANNEL_NAME="mychannel"
 CC_RUNTIME_LANGUAGE="golang"
 VERSION="1"
-CC_SRC_PATH="./../../artifacts/src/github.com/fabcar/go"
-CC_NAME="fabcar"
+CC_SRC_PATH="./../../artifacts/src/github.com/supply-chain"
+CC_NAME="supply-chain"
 
 packageChaincode() {
     rm -rf ${CC_NAME}.tar.gz
@@ -66,12 +66,12 @@ queryInstalled() {
     echo "===================== Query installed successful on peer0.org3 on channel ===================== "
 }
 
-# queryInstalled
+#queryInstalled
 
 approveForMyOrg3() {
     setGlobalsForPeer0Org3
 
-    peer lifecycle chaincode approveformyorg -o localhost:7050 \
+    peer lifecycle chaincode approveformyorg -o 34.66.24.223:7050 \
         --ordererTLSHostnameOverride orderer.example.com --tls $CORE_PEER_TLS_ENABLED \
         --cafile $ORDERER_CA --channelID $CHANNEL_NAME --name ${CC_NAME} \
         --version ${VERSION} --init-required --package-id ${PACKAGE_ID} \
@@ -91,4 +91,4 @@ checkCommitReadyness() {
     echo "===================== checking commit readyness from org 3 ===================== "
 }
 
-# checkCommitReadyness
+checkCommitReadyness
